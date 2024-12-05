@@ -1,2 +1,2 @@
 # versatiles-containers
-- Swiss Municipalities [Link](gde.versatiles)
+- Swiss Municipalities ([Download](gde.versatiles))
