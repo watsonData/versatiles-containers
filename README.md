@@ -6,9 +6,10 @@ VersaTiles Containers used at watson News.
 
 - Swiss Admin from swisstopo ([Directory](2025/ch/))
 - German Electoral Districts from Bundeswahlleiterin ([Download](2025/de/wahlkreise.versatiles))
-- Ski Data (Ski Lifts / Area below 1500m) from swisstopo ([Download](2025/ski.versatiles))
+- Ski Data (Ski Lifts + CH-Area below 1500m) from swisstopo ([Download](2025/ski.versatiles))
 - Gaza Strip Damage Assessment from UNOSAT ([Download](2025/gaza.versatiles))
 - Gaza Displacement from Gaza Maps ([Download](2025/gaza/displacement.versatiles))
+- Gaza Agriculture from UNOSAT ([Download](2025/gaza/agriculture.versatiles))
 
 ## 2016
 
