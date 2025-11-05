@@ -10,7 +10,7 @@ BFS_URL = "https://dam-api.bfs.admin.ch/hub/api/dam/assets/35130777/master"
 LAKE_LAYER = "K4seen_yyymmdd11"
 CANTON_LAYER = "K4kant_20220101_gf_ohne_Seen"
 MUNICIPALITY_LAYER = "K4voge_20250604_gf"
-VOTING_DISTRICT_LAYER = "zaehlkreise_ZH_Wint " # space at the end is intentional
+COUNTING_DISTRICT_LAYER = "zaehlkreise_ZH_Wint " # space at the end is intentional
 
 if not os.path.exists("./tmp"):
     os.makedirs("./tmp")
@@ -55,12 +55,12 @@ gdf_municipality = gdf_municipality.set_crs(epsg=2056)
 gdf_municipality = gdf_municipality.to_crs(epsg=4326)
 gdf_municipality.drop(columns=["id"]).rename(columns={"vogeId": "id", "kantId": "parentId"})[["id", "parentId", "geometry"]].to_file("./tmp/municipalities.geojson", driver="GeoJSON")
 
-# load voting districts (only for Zurich/Winterthur)
-gdf_voting_district = gpd.read_file(f"TOPOJSON:{BFS_URL}", layer=VOTING_DISTRICT_LAYER)
-gdf_voting_district = gdf_voting_district.set_crs(epsg=2056)
+# load counting districts (only for Zurich/Winterthur)
+gdf_counting_district = gpd.read_file(f"TOPOJSON:{BFS_URL}", layer=COUNTING_DISTRICT_LAYER)
+gdf_counting_district = gdf_counting_district.set_crs(epsg=2056)
 
-gdf_voting_district = gdf_voting_district.to_crs(epsg=4326)
-gdf_voting_district.rename(columns={"bezkId": "parentId"})[["id", "parentId", "geometry"]].to_file("./tmp/voting-districts.geojson", driver="GeoJSON")
+gdf_counting_district = gdf_counting_district.to_crs(epsg=4326)
+gdf_counting_district.rename(columns={"bezkId": "parentId"})[["id", "parentId", "geometry"]].to_file("./tmp/counting-districts.geojson", driver="GeoJSON")
 
 print("Building Docker image...")
 client.images.build(path=".", tag="watson-ddj/geo:latest", rm=True)
@@ -68,12 +68,12 @@ client.images.build(path=".", tag="watson-ddj/geo:latest", rm=True)
 # Command to generate mbtiles using tippecanoe
 tippecanoe_command = [
     "bash", "-c",
-    "tippecanoe -o /data/cantons.mbtiles /data/cantons.geojson --force && " +
-    'tippecanoe -o /data/voting-districts.mbtiles -L\'{"layer":"voting-districts", "file":"/data/voting-districts.geojson"}\' --force && ' +
-    'tippecanoe -o /data/municipalities.mbtiles /data/municipalities.geojson -L\'{"layer":"canton-borders", "file":"/data/canton-borders.geojson"}\' --force &&' +
+    "tippecanoe -z 12 --use-attribute-for-id=id --convert-stringified-ids-to-numbers --force -o /data/cantons.mbtiles /data/cantons.geojson && " +
+    'tippecanoe -z 12 --use-attribute-for-id=id --convert-stringified-ids-to-numbers --force -o /data/municipalities.mbtiles /data/municipalities.geojson -L\'{"layer":"canton-borders", "file":"/data/canton-borders.geojson"}\' &&' +
+    'tippecanoe -z 12 --use-attribute-for-id=id --convert-stringified-ids-to-numbers --force -o /data/counting-districts.mbtiles -L\'{"layer":"counting-districts", "file":"/data/counting-districts.geojson"}\' && ' +
     "versatiles convert /data/cantons.mbtiles /data/cantons.versatiles && " +
     "versatiles convert /data/municipalities.mbtiles /data/municipalities.versatiles && " +
-    "versatiles convert /data/voting-districts.mbtiles /data/voting-districts.versatiles"
+    "versatiles convert /data/counting-districts.mbtiles /data/counting-districts.versatiles"
 ]
 
 print("Running Docker image...")
@@ -83,6 +83,5 @@ print(client.containers.run(
     remove=True,
     stdout=True,
     stderr=True,
-    tty=True,
     volumes={os.path.abspath("./tmp"): {'bind': '/data', 'mode': 'rw'}},
-).decode("utf-8"))
+).decode("utf-8"), flush=True)
