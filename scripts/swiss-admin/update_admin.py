@@ -60,7 +60,7 @@ gdf_counting_district = gpd.read_file(f"TOPOJSON:{BFS_URL}", layer=COUNTING_DIST
 gdf_counting_district = gdf_counting_district.set_crs(epsg=2056)
 
 gdf_counting_district = gdf_counting_district.to_crs(epsg=4326)
-gdf_counting_district.rename(columns={"bezkId": "parentId"})[["id", "parentId", "geometry"]].to_file("./tmp/counting-districts.geojson", driver="GeoJSON")
+gdf_counting_district.rename(columns={"vogeId": "parentId"})[["id", "parentId", "geometry"]].to_file("./tmp/counting-districts.geojson", driver="GeoJSON")
 
 print("Building Docker image...")
 client.images.build(path=".", tag="watson-ddj/geo:latest", rm=True)
