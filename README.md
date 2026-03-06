@@ -2,6 +2,10 @@
 
 VersaTiles Containers used at watson News.
 
+## 2026
+
+- Swiss Admin from swisstopo ([Directory](2026/ch/))
+
 ## 2025
 
 - Swiss Admin from swisstopo ([Directory](2025/ch/))

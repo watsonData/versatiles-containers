@@ -6,11 +6,12 @@ import docker
 client = docker.from_env()
 
 # config
-BFS_URL = "https://dam-api.bfs.admin.ch/hub/api/dam/assets/35130777/master"
+# get latest url from
+BFS_URL = "https://dam-api.bfs.admin.ch/hub/api/dam/assets/36438312/master"
 LAKE_LAYER = "K4seen_yyymmdd11"
-CANTON_LAYER = "K4kant_20220101_gf_ohne_Seen"
-MUNICIPALITY_LAYER = "K4voge_20250604_gf"
-COUNTING_DISTRICT_LAYER = "zaehlkreise_ZH_Wint " # space at the end is intentional
+CANTON_LAYER = "k4kant_20260101_gf_ohne_seen"
+MUNICIPALITY_LAYER = "k4voge_20260101_gf"
+COUNTING_DISTRICT_LAYER = "zaehlkreise_ZH_Wint"
 
 if not os.path.exists("./tmp"):
     os.makedirs("./tmp")
